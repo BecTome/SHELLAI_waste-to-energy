@@ -47,30 +47,39 @@ $$
 greater than or equal to zero.
 
 $$
-Biomass_{i}^{forecast} >= 0,\quad biomass\_demand\_supply >= 0,\quad pellet\_demand\_supply >=0
+Biomass_{i}^{forecast} >= 0,\quad Biomass_{i, j} >= 0,\quad Pellet_{j, k} >=0
 $$
 
 2. The amount of biomass procured for processing from each harvesting site ′𝑖′ must be less than or equal to that site’s forecasted biomass.
+
 $$
 \sum_{j}Biomass_{i, j} <= Biomass_{i}^{forecast}
 $$
 
 3. Total biomass reaching each preprocessing depot ′𝑗′ must be less than or equal to its yearly processing capacity (20,000).
+
 $$
 \sum_{i}Biomass_{i, j} <= Cap_{depot}^j
 $$
+
 4. Total pellets reaching each refinery ′𝑘′ must be less than or equal to its yearly processing capacity (100,000).
+
 $$
 \sum_{j}Pellet_{j, k} <= Cap_{refinery}^k
 $$
+
 5. Number of depots should be less than or equal to 25.
+
 $$
 j<=25
 $$
+
 6. Number of refineries should be less than or equal to 5.
+
 $$
 k<=5
 $$
+
 7. At least 80% of the total forecasted biomass must be processed by refineries each year.
 
 $$
@@ -79,7 +88,10 @@ $$
 
 8. Total amount of biomass entering each preprocessing depot is equal to the total amount of
 pellets exiting that depot (within tolerance limit of 1e-03).
-$$\sum_{i}Biomass_{i, j} = \sum_{k}Pellet_{j, k}$$
+
+$$
+\sum_{i}Biomass_{i, j} = \sum_{k}Pellet_{j, k}
+$$
 
 
 # Data
