@@ -36,7 +36,7 @@ Cost_{forecast} = MAE\left(Biomass_{i, j}, Biomass_{i, j}^{forecast}\right)
 $$
 
 $$
-Cost_{underuse} = \sum_{i, j}\left(Cap_{depot} - \sum_{i,j}Biomass_{i, j}\right) + \sum_{j, k}\left(Cap_{refinery} - \sum_{j, k}Biomass_{j, k}\right)
+Cost_{underuse} = \sum_{i, j}\left(Cap_{depot} - \sum_{i,j}Biomass_{i, j}\right) + \sum_{j, k}\left(Cap_{refinery} - \sum_{j, k}Pellet_{j, k}\right)
 $$
 
 $$
