@@ -5,11 +5,18 @@ import matplotlib.pyplot as plt
 
 SYNTH_DATA_PATH = '002_Optimization/data'
 OUT_SYNTH_DATA_PATH = '002_Optimization/output'
+FORECAST_FILE = 'Biomass_History_Synthetic.csv'
+DISTANCE_FILE = 'Distance_Matrix_Synthetic.csv'
 
-d_matrix = pd.read_csv(os.path.join(SYNTH_DATA_PATH, 'Distance_Matrix_Synthetic.csv'), 
+d_matrix = pd.read_csv(os.path.join(SYNTH_DATA_PATH, DISTANCE_FILE), 
                        index_col=0)
+d_matrix = d_matrix.values
 
-df_fc = pd.read_csv(os.path.join(SYNTH_DATA_PATH, 'Biomass_History_Synthetic.csv'))
+N = 2418
+d_matrix = d_matrix[:N, :N]
+
+df_fc = pd.read_csv(os.path.join(SYNTH_DATA_PATH, FORECAST_FILE))
+df_fc = df_fc.iloc[:N, :]
 
 ls_j = range(len(d_matrix))
 year = 2018
@@ -32,67 +39,83 @@ print("Forecasted biomass for year 2019: ", total_fc_19)
 
 # Get the solution for the optimization problem
 m = Model(sense=minimize)
+m.threads = -1
 
 # Variables: biomass b_{i, 0}
+# 1. All values (forecasted biomass, biomass demand-supply, pellet demand-supply) must be
+# greater than or equal to zero.
 b_18 = [m.add_var(name=f'b_2018_{i}_{j}', lb=0) for i in range(len(d_matrix)) for j in ls_j]
+print(f"Variables b_2018 go from {b_18[0].name} to {b_18[-1].name}")
+
 b_19 = [m.add_var(name=f'b_2019_{i}_{j}', lb=0) for i in range(len(d_matrix)) for j in ls_j]
+print(f"Variables b_2019 go from {b_19[0].name} to {b_19[-1].name}")
 
 p_18 = [m.add_var(name=f'p_2018_{i}_{j}', lb=0) for i in range(len(d_matrix)) for j in ls_j]
-p_19 = [m.add_var(name=f'p_2019_{i}_{j}', lb=0) for i in range(len(d_matrix)) for j in ls_j]
-
-x = [m.add_var(name=f'x_{j}', var_type=BINARY) for j in ls_j]
-r = [m.add_var(name=f'r_{j}', var_type=BINARY) for j in ls_j]
-
-print(f"Variables b_2018 go from {b_18[0].name} to {b_18[-1].name}")
-print(f"Variables b_2019 go from {b_19[0].name} to {b_19[-1].name}")
 print(f"Variables p_2018 go from {p_18[0].name} to {p_18[-1].name}")
+
+p_19 = [m.add_var(name=f'p_2019_{i}_{j}', lb=0) for i in range(len(d_matrix)) for j in ls_j]
 print(f"Variables p_2019 go from {p_19[0].name} to {p_19[-1].name}")
 
+x = [m.add_var(name=f'x_{j}', var_type=BINARY) for j in ls_j]
 print(f"Variables x go from {x[0].name} to {x[-1].name}")
+
+r = [m.add_var(name=f'r_{j}', var_type=BINARY) for j in ls_j]
 print(f"Variables r go from {r[0].name} to {r[-1].name}")
 
 # Constraints:
-# 1. Can't transport more than generated
+# 2. The amount of biomass procured for processing from each harvesting site ′𝑖𝑖′ must be less than
+# or equal to that site’s forecasted biomass.
 for i in range(len(d_matrix)):
     m += xsum(m.var_by_name(f'b_2018_{i}_{j}') for j in ls_j) <= d_bio_18[i]
     m += xsum(m.var_by_name(f'b_2019_{i}_{j}') for j in ls_j) <= d_bio_19[i]
 
-m += xsum(m.var_by_name(f'b_2018_{i}_{j}') for i in range(len(d_matrix)) for j in ls_j)\
-    == xsum(m.var_by_name(f'p_2018_{i}_{j}') for i in range(len(d_matrix)) for j in ls_j)
-
-m += xsum(m.var_by_name(f'b_2019_{i}_{j}') for i in range(len(d_matrix)) for j in ls_j)\
-    == xsum(m.var_by_name(f'p_2019_{i}_{j}') for i in range(len(d_matrix)) for j in ls_j)
-
-# 2. Can't transport more than storage limit
 for j in ls_j:
+    # 3-4. Can't transport more than storage limit
     m += xsum(m.var_by_name(f'b_2018_{i}_{j}') for i in range(len(d_matrix))) <= cap_b_j * x[j]
     m += xsum(m.var_by_name(f'b_2019_{i}_{j}') for i in range(len(d_matrix))) <= cap_b_j * x[j]
     m += xsum(m.var_by_name(f'p_2018_{i}_{j}') for i in range(len(d_matrix))) <= cap_p_j * r[j]
     m += xsum(m.var_by_name(f'p_2019_{i}_{j}') for i in range(len(d_matrix))) <= cap_p_j * r[j]
 
-# 3. Where does the biomass go
+    # 8. Total amount of biomass entering each preprocessing depot is equal to the total amount of
+    # pellets exiting that depot (within tolerance limit of 1e-03
+    
+    m += xsum(m.var_by_name(f'b_2018_{i}_{j}')  - m.var_by_name(f'p_2018_{j}_{i}') for i in range(len(d_matrix))) <=\
+          .001 * x[j]
+    m += xsum(m.var_by_name(f'p_2018_{j}_{i}') - m.var_by_name(f'b_2018_{i}_{j}') for i in range(len(d_matrix))) <=\
+          .001 * x[j]
+    
+    m += xsum(m.var_by_name(f'b_2019_{i}_{j}')  - m.var_by_name(f'p_2019_{j}_{i}') for i in range(len(d_matrix))) <=\
+          .001 * x[j]
+    m += xsum(m.var_by_name(f'p_2019_{j}_{i}') - m.var_by_name(f'b_2019_{i}_{j}') for i in range(len(d_matrix))) <=\
+          .001 * x[j]
+    
+# 5. Number of depots should be less than or equal to 25.
 m += xsum(x[j] for j in ls_j) <= n_depots
 
-# 4. Where does the biomass go
+# 6. Number of refineries should be less than or equal to 5.
 m += xsum(r[j] for j in ls_j) <= n_refineries
 
-# 5. Flux conservation
-
+# 7. At least 80% of the total forecasted biomass must be processed by refineries each year
 m += xsum(m.var_by_name(f'p_2018_{i}_{j}') for i in range(len(d_matrix)) for j in ls_j)\
     >= 0.8 * total_fc_18
 m += xsum(m.var_by_name(f'p_2019_{i}_{j}') for i in range(len(d_matrix)) for j in ls_j)\
     >= 0.8 * total_fc_19
 
-m.objective = minimize(xsum(d_matrix.iloc[i, j] * (m.var_by_name(f'b_2018_{i}_{j}') + m.var_by_name(f'b_2019_{i}_{j}')) + \
-                            d_matrix.iloc[i, j] * (m.var_by_name(f'p_2018_{i}_{j}') + m.var_by_name(f'p_2019_{i}_{j}')) + \
-                            (cap_b_j - m.var_by_name(f'b_2018_{i}_{j}')) + (cap_b_j - m.var_by_name(f'b_2019_{i}_{j}')) + \
-                            (cap_p_j - m.var_by_name(f'p_2018_{i}_{j}')) + (cap_p_j - m.var_by_name(f'p_2019_{i}_{j}')) \
+m.objective = minimize(xsum(d_matrix[i, j] * (
+                                              m.var_by_name(f'b_2018_{i}_{j}') + m.var_by_name(f'b_2019_{i}_{j}') + \
+                                              m.var_by_name(f'p_2018_{i}_{j}') + m.var_by_name(f'p_2019_{i}_{j}')\
+                                              ) + \
+                            2*cap_b_j*x[j] - m.var_by_name(f'b_2018_{i}_{j}') - m.var_by_name(f'b_2019_{i}_{j}') + \
+                            2*cap_p_j*r[j] - m.var_by_name(f'p_2018_{i}_{j}') - m.var_by_name(f'p_2019_{i}_{j}') \
                                 for i in range(len(d_matrix)) for j in ls_j))
 
 print("Solve")
 # Solve the problem
-# m.max_gap = 0.05
-status = m.optimize(max_seconds=300)
+# m.max_gap = 0.1
+# m.threads = -1
+
+status = m.optimize(max_seconds=100)
+
 print(status)
 # Check the status and show the solutions
 if status == OptimizationStatus.OPTIMAL:
