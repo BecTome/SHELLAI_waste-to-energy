@@ -1,0 +1,190 @@
+Sr.No.,Estate,District,Size in Ha.,Power Supply (MVA),Water Supply (MLD),Drainage (MLD)
+1,Sanand (Mini),Ahmedabad,1.80,0.50,2.70,0.00
+2,Vani,Ahmedabad,2.00,2.00,0.20,0.00
+3,Vatwa- Zone 'D',Ahmedabad,6.30,2.00,0.43,0.00
+4,Dhandhuka,Ahmedabad,23.00,1.00,0.01,0.00
+5,Dholka,Ahmedabad,42.00,2.20,0.20,0.00
+6,Viramgam,Ahmedabad,42.00,5.00,1.24,0.00
+7,Kerala,Ahmedabad,97.30,9.50,1.13,0.00
+8,Kathawada I & II,Ahmedabad,62.00,2.00,4.54,0.00
+9,Odhav,Ahmedabad,117.60,7.80,17.03,11.80
+10,Naroda,Ahmedabad,347.92,15.80,19.04,5.90
+11,Vatwa,Ahmedabad,527.00,23.00,22.25,7.26
+12,Sankheda,Vadodara,0.80,0.50,0.00,0.00
+13,Pavi-jetpur,Vadodara,0.90,-,-,-
+14,GTC Ltd.,Vadodara,7.75,-,-,-
+15,Dabhoi,Vadodara,10.91,1.50,0.00,0.00
+16,Ranoli,Vadodara,31.08,3.00,0.40,0.00
+17,Limbda (Appolo Tyre),Vadodara,51.71,-,-,-
+18,Por-Ramangamdi,Vadodara,134.28,9.00,4.53,0.00
+19,Nandesari,Vadodara,197.20,15.00,10.07,5.45
+20,Makarpura,Vadodara,324.50,18.20,0.00,0.00
+21,Vaghodia,Vadodara,369.04,10.76,4.54,0.00
+22,P.C.C.,Vadodara,721.60,125.00,0.00,0.00
+23,Savli,Vadodara,544.00,50.00,3.50,0.00
+24,Thasra,Kheda,8.10,2.50,0.54,0.00
+25,Kapadwanj,Kheda,10.80,0.50,0.00,0.00
+26,Matar,Kheda,0.00,-,-,-
+27,Nadiad-I,Kheda,29.20,2.00,3.62,0.50
+28,Nadiad- II,Kheda,0.08,-,-,-
+29,Balasinor,Kheda,22.80,1.50,0.00,0.00
+30,Sojitra,Anand,8.80,1.00,1.82,0.00
+31,Umreth,Anand,10.70,0.50,0.54,0.00
+32,Petlad,Anand,11.40,1.50,0.00,0.00
+33,Borsad,Anand,16.30,2.00,0.86,0.00
+34,Khambat,Anand,37.83,2.50,0.55,0.00
+35,V.U. Nagar,Anand,228.00,5.50,3.67,0.00
+36,Bhat,Gandhinagar,26.00,0.00,0.08,0.00
+37,Gandhinagar-I,Gandhinagar,30.30,3.80,6.81,4.54
+38,Gandhinagar-II,Gandhinagar,234.00,7.50,0.00,0.00
+39,Dehgam,Gandhinagar,17.30,2.00,0.46,0.00
+40,Mansa,Gandhinagar,16.71,1.50,1.20,0.00
+41,Ranasan,Gandhinagar,39.94,3.00,0.18,0.00
+42,Gozaria,Gandhinagar,64.00,0.60,0.19,0.00
+43,Pardi,Valsad,22.70,1.00,0.61,0.00
+44,Dharampur-II,Valsad,35.47,-,-,-
+45,Bhilad,Valsad,63.38,-,-,-
+46,Valsad,Valsad,95.00,5.30,1.50,0.00
+47,Umargam,Valsad,336.00,18.50,4.50,0.00
+48,Sarigam,Valsad,286.50,15.60,40.86,12.71
+49,Vapi,Valsad,1026.00,42.00,95.20,79.90
+50,Unai,Navsari,2.00,0.00,0.00,0.00
+51,Bilimora,Navsari,44.90,2.50,0.91,0.00
+52,Navsari,Navsari,50.00,3.50,2.50,0.00
+53,Dhrol,Jamnagar,1.00,-,-,-
+54,Bhatia,Jamnagar,1.00,-,-,-
+55,Bhanvad,Jamnagar,0.00,-,-,-
+56,Jamkhambhalia,Jamnagar,7.97,0.25,0.03,0.00
+57,Arambhada,Jamnagar,22.20,0.75,0.78,0.00
+58,Jamnagar-I,Jamnagar,56.40,9.70,0.00,0.00
+59,Jamnagar-II,Jamnagar,99.90,2.40,0.78,0.00
+60,Kotda-Sangani,Rajkot,0.89,-,-,-
+61,Paddhari,Rajkot,1.00,-,-,-
+62,Malia,Rajkot,0.00,-,-,-
+63,Jasdan,Rajkot,6.58,2.00,0.06,0.00
+64,Bhaktinagar,Rajkot,8.80,2.00,0.05,0.02
+65,Jetpur,Rajkot,10.10,0.30,0.60,0.00
+66,Wankaner,Rajkot,19.70,2.00,0.09,0.00
+67,Morbi,Rajkot,8.50,2.30,0.13,0.00
+68,Dhoraji,Rajkot,0.00,-,-,-
+69,Gondal-I,Rajkot,13.20,2.00,0.13,0.00
+70,Gondal-II,Rajkot,32.71,-,-,-
+71,Rafaleshwar,Rajkot,30.61,2.00,0.01,0.00
+72,Kuvadawa,Rajkot,50.60,-,-,-
+73,Aji,Rajkot,83.31,5.30,1.10,0.00
+74,Lodhika,Rajkot,400.52,8.00,0.05,0.00
+75,Valod,Surat,1.13,-,-,-
+76,Khatodara,Surat,3.07,1.00,0.00,0.00
+77,Bardoli,Surat,4.70,0.50,0.06,0.00
+78,Nizar,Surat,0.00,-,-,-
+79,Olpad,Surat,29.65,1.00,0.03,0.00
+80,Katargam,Surat,38.00,7.60,0.87,0.00
+81,Doswada,Surat,165.62,-,-,-
+82,Pandesara,Surat,217.20,11.90,11.35,11.35
+83,Hazira (Mora),Surat,474.51,-,-,-
+84,Sachin,Surat,692.30,31.00,5.80,40.00
+85,Ichchapore (GIDC-SUDA),Surat,910.43,-,-,-
+86,Jafrabad,Amreli,1.00,-,-,-
+87,Liliya,Amreli,1.00,-,-,-
+88,Rajula,Amreli,3.92,-,-,-
+89,Babra (Dimond),Amreli,10.00,-,-,-
+90,Damnagar,Amreli,10.44,0.10,0.05,0.00
+91,Amreli,Amreli,14.15,1.00,0.50,0.00
+92,Babra(G),Amreli,15.85,-,-,-
+93,Vallabhipur,Bhavnagar,0.00,-,-,-
+94,Dhasa,Bhavnagar,0.50,-,-,-
+95,Botad,Bhavnagar,6.00,-,-,-
+96,Vitthalwadi,Bhavnagar,9.13,2.40,0.15,0.00
+97,Shihor-I,Bhavnagar,12.45,2.00,0.00,0.00
+98,Palitana,Bhavnagar,14.14,-,-,-
+99,Mahuva,Bhavnagar,16.81,1.50,0.00,0.00
+100,Shihor-II,Bhavnagar,18.70,2.00,0.30,0.00
+101,Vertej,Bhavnagar,28.45,3.73,0.18,0.00
+102,Alang,Bhavnagar,0.00,0.50,0.00,0.00
+103,Chitra,Bhavnagar,173.48,10.00,1.36,0.00
+104,Sihori,Banaskantha,1.64,-,-,-
+105,Ambaji,Banaskantha,6.54,0.75,0.30,0.00
+106,Palanpur,Banaskantha,7.58,1.00,1.36,0.00
+107,Deesa,Banaskantha,12.78,2.00,1.25,0.00
+108,Radhanpur,Banaskantha,0.00,0.00,0.60,0.00
+109,Chandisar,Banaskantha,64.58,2.00,1.00,0.00
+110,Mundra,Kutch,1.33,0.50,0.10,0.00
+111,Madhapur,Kutch,2.12,0.50,0.00,0.00
+112,Anjar,Kutch,10.00,2.00,0.13,0.01
+113,Gandhidham-I,Kutch,10.61,0.50,0.00,0.00
+114,Bhuj,Kutch,18.99,2.00,0.36,0.00
+115,Mandvi,Kutch,19.94,1.00,0.35,0.00
+116,Vagra,Bharuch,0.00,-,-,-
+117,Jambusar,Bharuch,2.20,-,-,-
+118,Hansot,Bharuch,0.00,-,-,-
+119,Panoli,Bharuch,0.00,-,-,-
+120,Nabipur,Bharuch,13.26,-,-,-
+121,Dungari,Bharuch,0.00,-,-,-
+122,Valia (Dodwada),Bharuch,32.15,-,-,-
+123,Valia (Water),Bharuch,40.84,-,-,-
+124,Naldhari,Bharuch,0.00,-,-,-
+125,Kanerao,Bharuch,0.00,-,-,-
+126,Bharuch,Bharuch,83.50,6.80,4.54,0.00
+127,Valia (Kondh),Bharuch,92.60,-,-,-
+128,Dahej (GACL),Bharuch,106.00,-,-,-
+129,Atali-Kaladra (Hsg),Bharuch,0.00,-,-,-
+130,Palej,Bharuch,155.20,5.31,2.00,0.00
+131,Valia,Bharuch,206.00,-,-,-
+132,Vagra (IPCL),Bharuch,0.00,-,-,-
+133,Vagra (Chem)-Vilayat,Bharuch,1029.00,2.00,36.32,0.00
+134,Panoli,Bharuch,930.44,14.50,36.05,20.00
+135,Ankleshwar,Bharuch,1259.90,62.00,72.67,53.22
+136,Jagadia (Chem),Bharuch,1600.00,100.00,45.00,50.00
+137,Dahej,Bharuch,2174.86,50.00,0.00,0.00
+138,Tilakwada,Narmada,10.35,-,-,-
+139,Sagbara,Narmada,1.50,-,-,-
+140,Dediapada,Narmada,2.39,-,-,-
+141,Rajpipla-II,Narmada,13.85,0.50,0.12,0.00
+142,Rajpipla-I,Narmada,9.50,-,-,-
+143,Visavadar,Junagadh,1.00,-,-,-
+144,Sil,Junagadh,0.00,-,-,-
+145,Junagadh-I,Junagadh,14.28,4.00,0.11,0.00
+146,Veraval,Junagadh,54.10,5.00,0.45,0.00
+147,Junagadh-II,Junagadh,84.81,2.50,0.60,0.00
+148,Sutrapada,Junagadh,160.11,-,-,-
+149,Porbandar,Porbandar,193.20,15.00,0.78,0.00
+150,Miyani,Porbandar,0.00,-,-,-
+151,Sayla,Surendranagar,1.00,0.50,0.00,0.00
+152,Chotila-I,Surendranagar,1.60,0.00,0.00,0.00
+153,Lakhtar,Surendranagar,0.00,-,-,-
+154,Halvad,Surendranagar,10.00,2.00,0.00,0.00
+155,Thangadh,Surendranagar,10.08,1.50,0.00,0.00
+156,Dhangadhra,Surendranagar,13.14,1.50,0.00,0.00
+157,Limbdi,Surendranagar,19.62,1.50,0.00,0.00
+158,Bamanbore,Surendranagar,41.06,1.00,0.10,0.00
+159,Surendranagar,Surendranagar,156.03,7.00,0.00,0.00
+160,Kukarwada,Mehsana,7.24,2.00,0.26,0.00
+161,Balisana,Mehsana,8.28,2.00,0.30,0.00
+162,Kheralu,Mehsana,13.36,2.00,0.30,0.00
+163,Visnagar,Mehsana,14.60,2.00,2.00,0.00
+164,Vijapur,Mehsana,0.00,-,-,-
+165,Mehsana-I,Mehsana,46.55,5.25,1.55,0.00
+166,Kalol,Mehsana,55.30,4.50,3.41,0.00
+167,Kadi,Mehsana,83.90,4.90,2.80,0.00
+168,IFFCO,Mehsana,112.04,0.00,36.15,0.00
+169,Mehsana-II,Mehsana,120.36,2.00,2.10,0.00
+170,Chhatral,Mehsana,187.90,9.00,3.63,0.00
+171,Patan,Patan,6.03,0.30,0.00,0.00
+172,Chanasma,Patan,18.73,2.10,0.54,0.00
+173,Lanva,Patan,22.81,0.00,0.13,0.00
+174,Sidhpur,Patan,0.00,-,-,-
+175,Jambughoda,Godhra,1.14,-,-,-
+176,Shahera,Godhra,0.00,-,-,-
+177,Godhra,Godhra,19.63,2.00,1.24,0.00
+178,Kalol,Godhra,71.08,5.50,0.56,0.00
+179,Halol,Godhra,175.20,7.80,1.45,0.00
+180,Dahod,Dahod,3.90,-,-,-
+181,Dahod- II,Dahod,30.00,1.00,0.00,0.00
+182,Devgadhbaria,Dahod,6.07,-,-,-
+183,Malpur,Sabarkantha,1.00,0.00,0.05,0.00
+184,Idar,Sabarkantha,2.60,0.50,0.25,0.00
+185,Modasa,Sabarkantha,10.00,1.50,0.52,0.00
+186,Himatnagar,Sabarkantha,25.37,2.20,0.76,0.00
+187,Talod,Sabarkantha,21.07,2.00,0.36,0.00
+188,Pimpri,Dang,0.00,0.00,-,-
+TOTAL,-,-,19908.36,898.70,545.42,302.66
