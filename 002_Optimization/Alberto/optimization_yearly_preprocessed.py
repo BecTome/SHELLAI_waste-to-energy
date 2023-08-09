@@ -3,43 +3,59 @@ import os
 from mip import Model, xsum, minimize, OptimizationStatus, BINARY
 from datetime import datetime
 import numpy as np
+import sys
+sys.path.append('.')
+from utils.config import LS_INDUSTRY_EXT
+from utils.help import get_n_closer
 
 SYNTH_DATA_PATH = '002_Optimization/data'
 OUT_SYNTH_DATA_PATH = '002_Optimization/output'
 FORECAST_FILE = 'Biomass_History_Synthetic.csv' # Forecast File (Synthetic at the beginning) Path
 DISTANCE_FILE = 'Distance_Matrix_Synthetic.csv' # Forecast File (Synthetic at the beginning) Path
 
-N = 30
+N = 2418
+TRANSPORT_FACTOR_A = .001
 
 df_matrix = pd.read_csv(os.path.join(SYNTH_DATA_PATH, DISTANCE_FILE), 
                        index_col=0)
 
-d_matrix = df_matrix.values[:N, :N]
+d_matrix = TRANSPORT_FACTOR_A * df_matrix.values #[:N, :N]
 
 df_fc = pd.read_csv(os.path.join(SYNTH_DATA_PATH, FORECAST_FILE))
-df_fc = df_fc.iloc[:N, :]
+df_fc = df_fc#.iloc[:N, :]
 
 df_get_idx = df_fc.loc[:, ['2018', '2019']].mean(axis=1)
 
-# d = 70
+d = 70
 
-# ls_depots = []
-# ls_depots_not = []
-# for center in range(N):
+# ls_depots_dist = []
+# for center in LS_INDUSTRY_EXT:
 #     df_center = pd.DataFrame(d_matrix[:, center], columns=['distance'])
 #     df_center["biomass"] = df_get_idx.values
 #     bmu50 = df_center[df_center['distance'] <= d].biomass.sum()
-#     if bmu50 >= 20000: # and bmu50 >= 15000:
-#         ls_depots.append(center)
-#     else:
-#         ls_depots_not.append(center)
+#     if bmu50 >= 15000:
+#         ls_depots_dist.append(center)
 
 # ls_refineries = df_matrix.iloc[ls_depots, ls_depots].mean(axis=1).sort_values(ascending=True)[:100].index.tolist()
 # ls_biosource = df_matrix.iloc[ls_depots, ls_depots].mean(axis=1).sort_values(ascending=False)[:500].index.tolist()
+# ls_depots_dist
 
-ls_depots = range(N)
-ls_refineries = range(N)
-ls_biosource = range(N)
+arr_n_closer_ind = get_n_closer(df_matrix.iloc[LS_INDUSTRY_EXT, :].values, n=50, uniques=True)
+arr_n_closer_ind = np.concatenate([arr_n_closer_ind, np.array(LS_INDUSTRY_EXT)])
+arr_n_closer_ind = np.unique(arr_n_closer_ind)
+ls_red = list(arr_n_closer_ind)
+print("Number of reduced candidates [HS]: ", len(ls_red))
+
+arr_n_closer_dep_ind = get_n_closer(df_matrix.iloc[LS_INDUSTRY_EXT, :].values, n=10, uniques=True)
+arr_n_closer_dep_ind = np.concatenate([arr_n_closer_dep_ind, np.array(LS_INDUSTRY_EXT)])
+arr_n_closer_dep_ind = np.unique(arr_n_closer_dep_ind)
+ls_dep_red = list(arr_n_closer_dep_ind)
+print("Number of reduced candidates [DEPOT]: ", len(ls_dep_red))
+print("Number of reduced candidates [REF]: ", len(ls_dep_red))
+
+ls_depots = ls_dep_red # range(N)
+ls_refineries = ls_dep_red # range(N)
+ls_biosource =  ls_red # range(N)
 # ls_refineries = ls_depots.copy()
 print("Number of depot candidates: ", len(ls_depots))
 
@@ -49,13 +65,13 @@ n_refineries = 5 # Number of refineries
 n_depots = 25 # Number of depots
 
 # Get the forecasted biomass for year 2018 of all the positions
-d_bio_18 = df_fc.loc[:, '2018']
+d_bio_18 = df_fc.loc[ls_biosource, '2018']
 total_fc_18 = d_bio_18.sum()
 d_bio_18 = d_bio_18.to_dict()
 print("Forecasted biomass for year 2018: ", total_fc_18)
 
 
-d_bio_19 = df_fc.loc[:, '2019']
+d_bio_19 = df_fc.loc[ls_biosource, '2019']
 total_fc_19 = d_bio_19.sum()
 d_bio_19 = d_bio_19.to_dict()
 print("Forecasted biomass for year 2019: ", total_fc_19)
@@ -89,8 +105,8 @@ print(f"Variables r: {len(r)}")
 # 2. The amount of biomass procured for processing from each harvesting site ′𝑖𝑖′ must be less than
 # or equal to that site’s forecasted biomass.
 for i in ls_biosource:
-    m += xsum(m.var_by_name(f'b_2018_{i}_{j}') for j in ls_depots) <= d_bio_18[i]
-    m += xsum(m.var_by_name(f'b_2019_{i}_{j}') for j in ls_depots) <= d_bio_19[i]
+    m += xsum(m.var_by_name(f'b_2018_{i}_{j}') for j in ls_depots) <= max(d_bio_18[i], d_bio_19[i])
+    m += xsum(m.var_by_name(f'b_2019_{i}_{j}') for j in ls_depots) <= max(d_bio_18[i], d_bio_19[i])
 
 for j in ls_depots:
     # 3-4. Can't transport more than storage limit
@@ -127,13 +143,16 @@ m += xsum(m.var_by_name(f'p_2018_{j}_{k}') for k in ls_refineries for j in ls_de
 m += xsum(m.var_by_name(f'p_2019_{j}_{k}') for k in ls_refineries for j in ls_depots)\
     >= 0.8 * total_fc_19
 
-m.objective = minimize(xsum(d_matrix[i, j] * (
-                                              m.var_by_name(f'b_2018_{i}_{j}') + m.var_by_name(f'b_2019_{i}_{j}') + \
-                                              m.var_by_name(f'p_2018_{j}_{k}') + m.var_by_name(f'p_2019_{j}_{k}')\
-                                              ) + \
-                            2*cap_b_j*m.var_by_name(f'x_{j}') - m.var_by_name(f'b_2018_{i}_{j}') - m.var_by_name(f'b_2019_{i}_{j}') + \
-                            2*cap_p_k*m.var_by_name(f'r_{k}') - m.var_by_name(f'p_2018_{j}_{k}') - m.var_by_name(f'p_2019_{j}_{k}') \
-                                for i in ls_biosource for j in ls_depots for k in ls_refineries))
+m.objective = minimize(
+                       xsum(d_matrix[i, j] * (m.var_by_name(f'b_2018_{i}_{j}') + m.var_by_name(f'b_2019_{i}_{j}')) +\
+                            - m.var_by_name(f'b_2018_{i}_{j}') - m.var_by_name(f'b_2019_{i}_{j}')\
+                            for i in ls_biosource for j in ls_depots) + \
+                       xsum(d_matrix[j, k] * (m.var_by_name(f'p_2018_{j}_{k}') + m.var_by_name(f'p_2019_{j}_{k}')) +\
+                            - m.var_by_name(f'p_2018_{j}_{k}') - m.var_by_name(f'p_2019_{j}_{k}')
+                            for j in ls_depots for k in ls_refineries) + \
+                       xsum(2 * cap_b_j*m.var_by_name(f'x_{j}') for j in ls_depots) + \
+                       xsum(2 * cap_p_k*m.var_by_name(f'r_{k}') for k in ls_refineries)\
+                       )
 
 print("Solve")
 # Solve the problem
