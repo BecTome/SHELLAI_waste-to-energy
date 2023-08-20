@@ -36,15 +36,17 @@ SYNTH_DATA_PATH = '002_Optimization/data'
 OUT_SYNTH_DATA_PATH = '002_Optimization/output/clustering'
 FORECAST_FILE = 'Biomass_History_Synthetic.csv' # Forecast File (Synthetic at the beginning) Path
 DISTANCE_FILE = 'Distance_Matrix_Synthetic.csv' # Forecast File (Synthetic at the beginning) Path
-N_CLUSTERS = 25
+N_CLUSTERS = 5
 
 TRANSPORT_FACTOR_A = .001
-DEPOT_LOWER_THRESHOLD = 8000
-DEPOT_UPPER_THRESHOLD = 15000
+DEPOT_LOWER_THRESHOLD = 5000
+DEPOT_UPPER_THRESHOLD = 17000
+REF_LOWER_THRESHOLD = 20000
+REF_UPPER_THRESHOLD = 87000
 
 cap_b_j = 20000 # Maximum depot capacity
 cap_p_k = 100000 # Maximum production capacity
-# n_refineries = d_refs[CLUSTER] # Number of refineries
+n_refineries = 5 # Number of refineries
 n_depots = 25 # Number of depots
 
 print("SYNTHETIC DATA PATH: {}".format(SYNTH_DATA_PATH))
@@ -54,6 +56,8 @@ print("DISTANCE FILE: {}".format(DISTANCE_FILE))
 print("TRANSPORT FACTOR A: {}".format(TRANSPORT_FACTOR_A))
 print("DEPOT LOWER THRESHOLD: {}".format(DEPOT_LOWER_THRESHOLD))
 print("DEPOT UPPER THRESHOLD: {}".format(DEPOT_UPPER_THRESHOLD))
+print("REFINERY LOWER THRESHOLD: {}".format(REF_LOWER_THRESHOLD))
+print("REFINERY UPPER THRESHOLD: {}".format(REF_UPPER_THRESHOLD))
 print("CAPACITY DEPOT: {}".format(cap_b_j))
 print("CAPACITY PRODUCTION: {}".format(cap_p_k))
 print("NUMBER OF DEPOTS: {}".format(n_depots))
@@ -96,6 +100,8 @@ d_clus_18 = df_clus.groupby('Cluster')['2018'].sum().to_dict()
 d_clus_19 = df_clus.groupby('Cluster')['2019'].sum().to_dict()
 
 d_depots = {k: (v // DEPOT_UPPER_THRESHOLD + 1) if v > DEPOT_LOWER_THRESHOLD else 0 for k, v in d_clus.items()}
+d_refs = {k: (v // REF_UPPER_THRESHOLD + 1) if v > REF_LOWER_THRESHOLD else 0 for k, v in d_clus.items()}
+
 d_depots_18 = {k: int(v // DEPOT_UPPER_THRESHOLD + 1) if v > DEPOT_LOWER_THRESHOLD else 0 for k, v in d_clus_18.items()}
 d_depots_19 = {k: int(v // DEPOT_UPPER_THRESHOLD + 1) if v > DEPOT_LOWER_THRESHOLD else 0 for k, v in d_clus_19.items()}
 
@@ -107,10 +113,11 @@ d_idxs_clus = {k: list(ls_idxs) for k, ls_idxs in df_clus.groupby('Cluster').gro
 d_intradist = {k: d_matrix_orig[d_idxs_clus[k], :][:, d_idxs_clus[k]].max() for k in d_idxs_clus.keys()}
 
 for k, v in d_idxs_clus.items():
-    print(f"GROUP: {k} - DEPOTS: {d_depots[k]} - MIN DEPOTS: {d_depots_min[k]:.2f} - MAX DEPOTS: {d_depots_max[k]:.2f} - N POINTS: {len(v)}"+\
-                    f" - BIOMASS 2018: {d_clus_18[k]:.2f} - BIOMASS 2019: {d_clus_19[k]:.2f} - MAX INTRADISTANCE: {d_intradist[k]:.2f}")
+    print(f"GROUP: {k} - DEPOTS: {d_depots[k]} - REFINERIES: {d_refs[k]} - N POINTS: {len(v)}")
+          
 print()
 logging.info(f"TOTAL DEPOTS: {sum(d_depots.values())}")
+logging.info(f"TOTAL REFINERIES: {sum(d_refs.values())}")
 logging.info(f"TOTAL DEPOTS 18: {sum(d_depots_18.values())}")
 logging.info(f"TOTAL DEPOTS 19: {sum(d_depots_19.values())}")
 logging.info(f"PCT COVERED (CONSTRAINED): {sum([v for k, v in d_clus.items() if  (d_depots[k] != 0)&(d_depots_min[k]<=d_depots_max[k])]) / sum(d_clus.values()):.2%}")
@@ -131,10 +138,13 @@ for CLUSTER in d_depots.keys():
 
     IDX_CLUS = d_idxs_clus[CLUSTER] # Indexes of the cluster
     n_depots = d_depots[CLUSTER] # Number of depots
+    n_refineries = d_refs[CLUSTER] # Number of refineries
 
     print('Number of depots: {}'.format(n_depots))
     if n_depots == 0:
         continue
+
+    print('Number of refineries: {}'.format(n_refineries))
 
     df_fc_clus = df_fc.loc[IDX_CLUS, :].copy()
     total_fc_18 = df_fc_clus.loc[:, '2018'].sum()
@@ -172,6 +182,7 @@ for CLUSTER in d_depots.keys():
 
     ls_biosource = list(d_arcs_ij.keys()) # range(N) # ls_dep_red
     ls_depots = list(d_arcs_ji.keys()) # range(N) # ls_dep_red
+    ls_refineries = list(d_arcs_jk.keys()) # range(N) # ls_dep_red
 
     # Get the forecasted biomass for year 2018 of all the positions
     d_bio_18 = df_fc_clus.loc[ls_biosource, '2018']
@@ -193,14 +204,24 @@ for CLUSTER in d_depots.keys():
     # greater than or equal to zero.
 
     logging.info("SET VARIABLES")
+
     b_18 = [m.add_var(name=f'b_2018_{i}_{j}', lb=0) for i, j in ls_arcs_ij]
     logging.info(f"Variables b_2018: {len(b_18)}")
 
     b_19 = [m.add_var(name=f'b_2019_{i}_{j}', lb=0) for i, j in ls_arcs_ij]
     logging.info(f"Variables b_2019: {len(b_19)}")
 
+    p_18 = [m.add_var(name=f'p_2018_{j}_{k}', lb=0) for j, k in ls_arcs_jk]
+    logging.info(f"Variables p_2018: {len(p_18)}")
+
+    p_19 = [m.add_var(name=f'p_2019_{j}_{k}', lb=0) for j, k in ls_arcs_jk]
+    logging.info(f"Variables p_2019: {len(p_19)}")
+
     x = [m.add_var(name=f'x_{j}', var_type=BINARY) for j in ls_depots]
     logging.info(f"Variables x: {len(x)}")
+
+    r = [m.add_var(name=f'r_{k}', var_type=BINARY) for k in ls_refineries]
+    logging.info(f"Variables r: {len(r)}")
 
     # Constraints:
     # 2. The amount of biomass procured for processing from each harvesting site ′𝑖𝑖′ must be less than
@@ -221,6 +242,42 @@ for CLUSTER in d_depots.keys():
         m += xsum(m.var_by_name(f'b_2018_{i}_{j}') for i in d_arcs_ji[j]) <= cap_b_j * m.var_by_name(f'x_{j}')
         m += xsum(m.var_by_name(f'b_2019_{i}_{j}') for i in d_arcs_ji[j]) <= cap_b_j * m.var_by_name(f'x_{j}')
     
+    for k in ls_refineries:
+        m += xsum(m.var_by_name(f'p_2018_{j}_{k}') for j in d_arcs_kj[k]) <= cap_p_k * m.var_by_name(f'r_{k}')
+        m += xsum(m.var_by_name(f'p_2019_{j}_{k}') for j in d_arcs_kj[k]) <= cap_p_k * m.var_by_name(f'r_{k}')
+
+    logging.info("Constraint 8: Pellets in = Pellets out")
+    for j in ls_depots:
+        # 8. Total amount of biomass entering each preprocessing depot is equal to the total amount of
+        # pellets exiting that depot (within tolerance limit of 1e-03
+        
+        m += xsum(m.var_by_name(f'b_2018_{i}_{j}') for i in d_arcs_ji[j])\
+            - xsum(m.var_by_name(f'p_2018_{j}_{k}') for k in d_arcs_jk[j])\
+            <= .001 # * m.var_by_name(f'x_{j}')
+        
+        m += xsum(m.var_by_name(f'p_2018_{j}_{k}') for k in d_arcs_jk[j])\
+            - xsum(m.var_by_name(f'b_2018_{i}_{j}') for i in d_arcs_ji[j])\
+            <= .001 # * m.var_by_name(f'x_{j}')
+
+        m += xsum(m.var_by_name(f'b_2019_{i}_{j}') for i in d_arcs_ji[j])\
+            - xsum(m.var_by_name(f'p_2019_{j}_{k}') for k in d_arcs_jk[j])\
+            <= .001 # * m.var_by_name(f'x_{j}')
+        
+        m += xsum(m.var_by_name(f'p_2019_{j}_{k}') for k in d_arcs_jk[j])\
+            - xsum(m.var_by_name(f'b_2019_{i}_{j}') for i in d_arcs_ji[j])\
+            <= .001 #* m.var_by_name(f'x_{j}')
+    
+    logging.info("Constraint 6: Number of refineries should be less than or equal to 5")
+    # 6. Number of refineries should be less than or equal to 5.
+    m += xsum(m.var_by_name(f'r_{k}') for k in ls_refineries) <= n_refineries
+
+    logging.info(r"Constraint 7: At least 80% of the total forecasted biomass must be processed by refineries each year")
+    # 7. At least 80% of the total forecasted biomass must be processed by refineries each year
+    m += xsum(m.var_by_name(f'p_2018_{j}_{k}') for j, k in ls_arcs_jk)\
+        >= 0.8 * total_fc_18
+    m += xsum(m.var_by_name(f'p_2019_{j}_{k}') for j, k in ls_arcs_jk)\
+        >= 0.8 * total_fc_19
+
     logging.info(f"Constraint 5: Number of depots should be less than or equal to {n_depots}")
     # 5. Number of depots should be less than or equal to 25.
     m += xsum(m.var_by_name(f'x_{j}') for j in ls_depots) <= n_depots
@@ -246,7 +303,11 @@ for CLUSTER in d_depots.keys():
                         xsum(df_matrix_obj.loc[i, str(j)] * (m.var_by_name(f'b_2018_{i}_{j}') + m.var_by_name(f'b_2019_{i}_{j}')) +\
                                 - m.var_by_name(f'b_2018_{i}_{j}') - m.var_by_name(f'b_2019_{i}_{j}')\
                                 for i, j in ls_arcs_ij) + \
-                        xsum(2 * cap_b_j*m.var_by_name(f'x_{j}') for j in ls_depots)
+                        xsum(df_matrix_obj.loc[j, str(k)] * (m.var_by_name(f'p_2018_{j}_{k}') + m.var_by_name(f'p_2019_{j}_{k}')) +\
+                                - m.var_by_name(f'p_2018_{j}_{k}') - m.var_by_name(f'p_2019_{j}_{k}')
+                                for j, k in ls_arcs_jk) + \
+                        xsum(2 * cap_b_j*m.var_by_name(f'x_{j}') for j in ls_depots) + \
+                        xsum(2 * cap_p_k*m.var_by_name(f'r_{k}') for k in ls_refineries)\
                         )
     
     print("\n")
@@ -294,9 +355,15 @@ for CLUSTER in d_depots.keys():
         idxs_depots_sol = df_sol_clus.filter(regex='x_', axis=0).copy()#[df_sol['biomass'] != 0].index
         idxs_depots_sol = idxs_depots_sol[idxs_depots_sol['biomass'] == 1]
         idxs_depots_sol = idxs_depots_sol.index.str.split('_', expand=True).get_level_values(1).astype(int).unique()
-        coords = df_fc.loc[idxs_depots_sol, ['Latitude', 'Longitude']].values
         print("\n\n")
         print(f"COORDINATES OF THE DEPOTS: {idxs_depots_sol}")    
+        print("\n\n")
+
+        idxs_refs_sol = df_sol_clus.filter(regex='r_', axis=0).copy()#[df_sol['biomass'] != 0].index
+        idxs_refs_sol = idxs_refs_sol[idxs_refs_sol['biomass'] == 1]
+        idxs_refs_sol = idxs_refs_sol.index.str.split('_', expand=True).get_level_values(1).astype(int).unique()
+        print("\n\n")
+        print(f"COORDINATES OF THE REFINERIES: {idxs_refs_sol}")    
         print("\n\n")
 
 print("\n\n")

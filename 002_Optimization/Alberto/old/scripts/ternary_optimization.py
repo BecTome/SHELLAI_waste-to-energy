@@ -37,8 +37,8 @@ df_fc = df_fc.iloc[top_idxs, :]
 
 df_matrix = pd.read_csv(os.path.join(SYNTH_DATA_PATH, DISTANCE_FILE), 
                        index_col=0).iloc[top_idxs, top_idxs]
-
-d_matrix = TRANSPORT_FACTOR_A * df_matrix.values
+df_matrix_obj = TRANSPORT_FACTOR_A * df_matrix.copy()
+# d_matrix = TRANSPORT_FACTOR_A * df_matrix.values
 
 
 

@@ -1,17 +1,14 @@
-CAP_DEPOT = 20_000 # Capacity of a depot
-CAP_REF = 100_000 # Capacity of a refinery
-N_DEPOTS = 25 # Number of depots
-N_REF = 5 # Number of refineries
-MIN_PROC_BIO_RATE = 0.8 # Minimum processing rate of biomass
-LS_INDUSTRY_EXT = [ 809, 1278, 1060,  744, 1004,  818,  818,  882, 1490, 1488, 1292,
-       1546, 1292, 1425, 1179, 1015,  823, 1063, 1119, 1119,  891, 1172,
-       1068, 1229, 1290,  751,  683,  683,  754,  497,  495, 2373, 2367,
-       2392, 2375, 2412, 2390, 2383, 2297, 2319, 2261, 1144, 1381, 1195,
-       1254, 1581, 1261, 1585, 1395, 1746,  985, 1744, 1639, 1639, 1396,
-       1456, 2228, 2187, 2009, 2045, 2142, 2184, 2223, 2287, 1920, 2214,
-       1811, 1861, 1701, 1653, 1925, 2175, 2042,  111,  132,  103,  977,
-        721,  722,  648,  972, 1716, 1542, 1878, 1937, 1718, 1773, 1824,
-       1664, 1882, 1937, 1880, 1823, 1611, 1947, 1887, 1724, 1724, 2024,
-       1965, 1965, 1840, 1677, 1157, 1268,  935, 1153,  868, 1161, 1050,
-        388,  438,  388,  613,  388,  259,  341,  221, 1020, 1028, 1028,
-        505,  813]
+SYNTH_DATA_PATH = '002_Optimization/data'
+OUT_SYNTH_DATA_PATH = '002_Optimization/output/clustering'
+FORECAST_FILE = 'Biomass_History_Forecast.csv' # Forecast File (Synthetic at the beginning) Path
+DISTANCE_FILE = 'Distance_Matrix_Synthetic.csv' # Distance Matrix File Path
+N_CLUSTERS = 25
+DEPOT_SOL_EXT = 'DEPOTS.csv'
+
+TRANSPORT_FACTOR_A = .001
+DEPOT_LOWER_THRESHOLD = 8000
+DEPOT_UPPER_THRESHOLD = 15000
+
+cap_b_j = 20000 - 1e-2 # Maximum depot capacity
+cap_p_k = 100000 - 1e-2# Maximum production capacity
+

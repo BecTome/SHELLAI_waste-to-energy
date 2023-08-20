@@ -1,0 +1,2 @@
+DEPOTS_DATA = '002_Optimization/output/clustering/solution_19_08_2023_21_35_38.csv'
+SOLUTION_FILE = 'clustering/refineries/solution_20_08_2023_04_33_48.csv'
